@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NutriScan | AI Nutrition Tracker</title>
+    <link rel="icon" href="data:,">
+
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script type="module" src="./js/firebase-config.js"></script>
+    <script type="module" src="./js/auth.js"></script>
+    <script type="module" src="./js/dashboard.js"></script>
+    <script type="module" src="./js/ai.js"></script>
+    <script type="module" src="./js/history.js"></script>
+    <script type="module" src="./js/profile.js"></script>
+    <script type="module" src="./js/analytics.js"></script>
+    <script type="module" src="./js/navigation.js"></script>
+</head>
+
+<body>
+
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen">
+        <h2>Loading NutriScan AI...</h2>
+    </div>
+
+    <!-- AUTH SECTION -->
+    <div id="auth-section" class="center-screen">
+
+        <div class="card auth-card">
+
+            <img class="logo" src="logo.png" alt="NutriScan Logo">
+            <p class="subtext">AI-Powered Diet Tracking System</p>
+
+            <input type="email" id="email" placeholder="Email Address">
+            <input type="password" id="password" placeholder="Password">
+            <div class="show-password">
+
+                <input
+                    type="checkbox"
+                    id="show-password"
+                >
+            
+                <label for="show-password">
+            
+                    Show Password
+            
+                </label>
+            
+            </div>
+
+            <button id="login-btn" class="btn">LOGIN</button>
+            <button id="signup-btn" class="btn secondary-btn">CREATE ACCOUNT</button>
+
+            <p id="auth-message"></p>
+
+        </div>
+
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard-section">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div>
+                <img class="logo" src="logo.png" alt="TraxNutri Logo">
+
+                <ul>
+
+                    <li class="nav-item active-nav" data-page="dashboard-page">
+
+                        Dashboard
+
+                    </li>
+
+                    <li class="nav-item" data-page="scanner-page">
+
+                        AI Scanner
+
+                    </li>
+
+                    <li class="nav-item" data-page="analytics-page">
+
+                        Analytics
+
+                    </li>
+
+                    <li class="nav-item" data-page="history-page">
+
+                        Meal History
+
+                    </li>
+
+                    <li class="nav-item" data-page="profile-page">
+
+                        Profile
+
+                    </li>
+
+                </ul>
+            </div>
+
+            <button id="logout-btn" class="logout-btn">Logout</button>
+
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <!-- ===================================== -->
+            <!-- DASHBOARD PAGE -->
+            <!-- ===================================== -->
+
+            <!-- ===================================== -->
+<!-- DASHBOARD PAGE -->
+<!-- ===================================== -->
+
+<section id="dashboard-page" class="page-section active-page">
+
+    <!-- PAGE TITLE -->
+
+    <div class="dashboard-title">
+
+        <h1>Dashboard | <small style="color:#fff; font-size: 60%;">AI Nutrition Monitoring Overview</small></h1>
+
+    </div>
+
+
+    <!-- SUMMARY CARDS -->
+
+    <div class="dashboard-summary">
+
+        <div class="summary-card">
+
+            <span>Today's Calories</span>
+
+            <h2 id="today-calories">0</h2>
+
+            <small>kcal</small>
+
+        </div>
+
+        <div class="summary-card">
+
+            <span>Meals Today</span>
+
+            <h2 id="today-meals">0</h2>
+
+        </div>
+
+        <div class="summary-card">
+
+            <span>Health Score</span>
+
+            <h2 id="dashboard-health">0/100</h2>
+
+        </div>
+
+        <div class="summary-card">
+
+            <span>BMI</span>
+
+            <h2 id="dashboard-bmi">--</h2>
+
+        </div>
+
+    </div>
+
+
+    <!-- NUTRIENT PROGRESS -->
+
+    <div class="card">
+
+        <h2>Today's Nutrition Progress</h2>
+
+        <div class="progress-item">
+
+            <label>
+
+                Calories
+
+                <span id="calorie-label">0 kcal</span>
+
+            </label>
+
+            <progress
+
+                id="calorie-progress"
+
+                max="2200"
+
+                value="0">
+
+            </progress>
+
+        </div>
+
+        <div class="progress-item">
+
+            <label>
+
+                Protein
+
+                <span id="protein-label">0 g</span>
+
+            </label>
+
+            <progress
+
+                id="protein-progress"
+
+                max="150"
+
+                value="0">
+
+            </progress>
+
+        </div>
+
+        <div class="progress-item">
+
+            <label>
+
+                Carbohydrates
+
+                <span id="carbs-label">0 g</span>
+
+            </label>
+
+            <progress
+
+                id="carbs-progress"
+
+                max="300"
+
+                value="0">
+
+            </progress>
+
+        </div>
+
+        <div class="progress-item">
+
+            <label>
+
+                Fat
+
+                <span id="fat-label">0 g</span>
+
+            </label>
+
+            <progress
+
+                id="fat-progress"
+
+                max="80"
+
+                value="0">
+
+            </progress>
+
+        </div>
+
+    </div>
+
+
+    <!-- DAILY FACT -->
+
+    <div class="card">
+
+        <h3>Daily Nutrition Fact</h3>
+
+        <p id="daily-fact">
+
+            Loading...
+
+        </p>
+
+    </div>
+
+</section>
+
+            <!-- ===================================== -->
+            <!-- PROFILE PAGE -->
+            <!-- ===================================== -->
+
+            <section id="profile-page" class="page-section">
+                <!-- ===================================== -->
+                <!-- USER PROFILE CARD -->
+                <!-- ===================================== -->
+
+                <div class="card profile-card">
+
+                    <h2>User Health Profile</h2>
+
+                    <div class="profile-grid">
+
+                        <input type="text" id="profile-name" placeholder="Full Name">
+
+                        <input type="number" id="profile-age" placeholder="Age">
+
+                        <select id="profile-gender">
+
+                            <option value="">
+                                Select Gender
+                            </option>
+
+                            <option value="Male">
+                                Male
+                            </option>
+
+                            <option value="Female">
+                                Female
+                            </option>
+
+                        </select>
+
+                        <input type="number" id="profile-weight" placeholder="Weight (kg)">
+
+                        <input type="number" id="profile-height" placeholder="Height (cm)">
+
+                        <select id="profile-goal">
+
+                            <option value="">
+                                Health Goal
+                            </option>
+
+                            <option value="Weight Loss">
+                                Weight Loss
+                            </option>
+
+                            <option value="Muscle Gain">
+                                Muscle Gain
+                            </option>
+
+                            <option value="Maintenance">
+                                Maintenance
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <button class="primary-btn" id="save-profile-btn">
+
+                        Save Profile
+
+                    </button>
+
+                </div>
+
+                <!-- ===================================== -->
+                <!-- BMI RESULT CARD -->
+                <!-- ===================================== -->
+
+                <div class="card bmi-card">
+
+                    <h2>BMI Analysis</h2>
+
+                    <div class="analysis-section">
+
+                        <div class="analysis-box">
+
+                            <span>BMI Value</span>
+
+                            <h3 id="bmi-value">
+                                --
+                            </h3>
+
+                        </div>
+
+                        <div class="analysis-box">
+
+                            <span>BMI Status</span>
+
+                            <h3 id="bmi-status">
+                                --
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <div class="tips-box">
+
+                        <h3>Daily Calorie Recommendation</h3>
+
+                        <p id="calorie-target">
+                            --
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </section>
+
+            <!-- ===================================== -->
+            <!-- SCANNER PAGE -->
+            <!-- ===================================== -->
+
+            <section id="scanner-page" class="page-section">
+                <!-- IMAGE SCAN -->
+                <div class="card">
+
+                    <h2>Scan Meal</h2>
+
+                    <div class="upload-zone" id="upload-zone">
+                        <p id="upload-text">Click to Upload Meal Image</p>
+                        <img id="preview">
+                    </div>
+
+                    <input type="file" id="file-input" accept="image/*" hidden>
+
+                    <button id="analyze-btn" class="btn">
+                        Analyze Meal
+                    </button>
+
+                    <p id="scan-status"></p>
+
+                </div>
+
+                <!-- AI RESULT -->
+                <div id="result-card" class="card" style="display:none;">
+
+                    <h2 style="margin-bottom:25px;color:gold;">
+                    AI ANALYSIS REPORT
+                    </h2>
+                    
+                    <!-- FOOD -->
+                    
+                    <div class="report-section">
+                    
+                    <h3>🍽 Detected Meal</h3>
+                    
+                    <h2 id="food-name"></h2>
+                    
+                    </div>
+                    
+                    
+                    <!-- AI -->
+                    
+                    <div class="report-section">
+                    
+                    <h3>🤖 AI Recognition</h3>
+                    
+                    <p>
+                    
+                    <strong>Confidence</strong>
+                    
+                    <br>
+                    
+                    <span id="confidence-score"></span>
+                    
+                    </p>
+                    
+                    <p>
+                    
+                    <strong>Analysis Source</strong>
+                    
+                    <br>
+                    
+                    <span id="analysis-source"></span>
+                    
+                    </p>
+                    
+                    <p>
+                    
+                    <strong>Alternative Matches</strong>
+                    
+                    </p>
+                    
+                    <ul id="alternative-foods">
+                    
+                    </ul>
+                    
+                    </div>
+                    
+                    
+                    <!-- NUTRITION -->
+                    
+                    <div class="report-section">
+                    
+                    <h3>🥗 Nutrition Facts</h3>
+                    
+                    <div class="nutrient-grid">
+                    
+                    <div class="nutrient-box">
+                    
+                    Calories
+                    
+                    <h3 id="food-calories"></h3>
+                    
+                    </div>
+                    
+                    <div class="nutrient-box">
+                    
+                    Protein
+                    
+                    <h3 id="food-protein"></h3>
+                    
+                    </div>
+                    
+                    <div class="nutrient-box">
+                    
+                    Carbs
+                    
+                    <h3 id="food-carbs"></h3>
+                    
+                    </div>
+                    
+                    <div class="nutrient-box">
+                    
+                    Fat
+                    
+                    <h3 id="food-fat"></h3>
+                    
+                    </div>
+                    
+                    </div>
+                    
+                    </div>
+                    
+                    
+                    <!-- HEALTH -->
+                    
+                    <div class="report-section">
+                    
+                    <h3>💚 Health Assessment</h3>
+                    
+                    <p>
+                    
+                    Health Score
+                    
+                    <br>
+                    
+                    <strong id="health-score"></strong>
+                    
+                    </p>
+                    
+                    <p>
+                    
+                    Meal Quality
+                    
+                    <br>
+                    
+                    <strong id="meal-quality"></strong>
+                    
+                    </p>
+                    
+                    </div>
+                    
+                    
+                    <!-- TIP -->
+                    
+                    <div class="report-section">
+                    
+                    <h3>💡 AI Recommendation</h3>
+                    
+                    <p id="nutrition-tip"></p>
+                    
+                    </div>
+                    
+                    </div>
+
+
+            </section>
+
+
+            <!-- ===================================== -->
+            <!-- ANALYTICS PAGE -->
+            <!-- ===================================== -->
+
+            <section id="analytics-page" class="page-section">
+                <!-- ===================================== -->
+                <!-- ANALYTICS -->
+                <!-- ===================================== -->
+ <!-- DAILY TOTALS -->
+
+ <div class="stats-grid">
+
+    <div class="stat-card">
+
+        <h3>Total Calories</h3>
+
+        <p id="total-calories">
+
+            0 kcal
+
+        </p>
+
+    </div>
+
+    <div class="stat-card">
+
+        <h3>Protein</h3>
+
+        <p id="total-protein">
+
+            0 g
+
+        </p>
+
+    </div>
+
+    <div class="stat-card">
+
+        <h3>Carbohydrates</h3>
+
+        <p id="total-carbs">
+
+            0 g
+
+        </p>
+
+    </div>
+
+    <div class="stat-card">
+
+        <h3>Fat</h3>
+
+        <p id="total-fat">
+
+            0 g
+
+        </p>
+
+    </div>
+
+</div>
+
+                <div class="card">
+
+   
+                    <h2>Nutrition Analytics</h2>
+
+    <div class="analytics-controls">
+
+        <label>
+
+            Metric
+
+        </label>
+
+        <select id="metric-select">
+
+            <option value="calories">
+
+                Calories
+
+            </option>
+
+            <option value="protein">
+
+                Protein
+
+            </option>
+
+            <option value="carbs">
+
+                Carbohydrates
+
+            </option>
+
+            <option value="fat">
+
+                Fat
+
+            </option>
+
+        </select>
+
+    </div>
+
+    <canvas id="nutritionChart"></canvas>
+
+                    <div class="tips-box">
+
+                        <h3>Daily Nutrition Insight</h3>
+
+                        <p id="daily-insight">
+
+                            No nutrition analysis available yet.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="card">
+
+                    <h3>🤖 AI Nutrition Insight</h3>
+                
+                    <p id="nutrition-insight">
+                
+                        No analysis available yet.
+                
+                    </p>
+                
+                </div>
+
+            </section>
+
+            <!-- ===================================== -->
+            <!-- HISTORY PAGE -->
+            <!-- ===================================== -->
+
+            <section id="history-page" class="page-section">
+                <!-- HISTORY -->
+                <div class="card">
+
+                    <h2>Meal History</h2>
+                    <input
+                    type="text"
+                    id="history-search"
+                    
+                    placeholder="Search meal..."
+                    
+                    class="search-box">
+                    
+                    <div id="history-list"></div>
+
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- ===================================== -->
+<!-- DELETE CONFIRM MODAL -->
+<!-- ===================================== -->
+
+<div id="delete-modal" class="modal-overlay">
+
+    <div class="modal-box">
+
+        <h2>Delete Meal?</h2>
+
+        <p>
+
+            This meal will be permanently removed from your history.
+
+        </p>
+
+        <div class="modal-buttons">
+
+            <button
+                id="cancel-delete"
+                class="secondary-btn"
+            >
+
+                Cancel
+
+            </button>
+
+            <button
+                id="confirm-delete"
+                class="danger-btn"
+            >
+
+                Delete
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const password =
+
+document.getElementById(
+    "password"
+);
+
+const toggle =
+
+document.getElementById(
+    "show-password"
+);
+
+toggle.addEventListener(
+    "change",
+    ()=>{
+
+        password.type =
+
+            toggle.checked
+
+            ? "text"
+
+            : "password";
+
+    }
+);
+
+</script>
+
+
+</body>
+
+</html>
